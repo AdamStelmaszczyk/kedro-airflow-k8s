@@ -296,7 +296,10 @@ with DAG(
     {% endif %}
 
     {% if not config.run_config.volume.disabled %}
-    kedro_group >> delete_pipeline_storage
+    from airflow.operators.dummy import DummyOperator
+    final = DummyOperator(task_id='final', dag=dag)
+    kedro_group >> final
+    delete_pipeline_storage >> final
     {% endif %}
 
 if __name__ == "__main__":
